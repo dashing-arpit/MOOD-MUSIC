@@ -4,7 +4,7 @@ import "./button.css"
 export default function Login() {
     const handleClick = async () => {
       const client_id = "8010c2b0298d46729fcc4f1a2c577fe7";
-      const redirect_uri = "http://localhost:3000/";
+      const redirect_uri = "https://moody-music.netlify.app/";
       const api_uri = "https://accounts.spotify.com/authorize";
       const scope = [
       "user-read-private",

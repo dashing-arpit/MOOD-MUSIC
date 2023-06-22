@@ -138,17 +138,7 @@ const MoodDetection = () => {
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
   
     // Compress image data
-    const compress = new Compress();
-    const blob = await fetch(canvas.toDataURL()).then((res) => res.blob());
-    const resizedImage = await compress.compress([blob], {
-      size: 4,
-      quality: 0.75,
-      maxWidth: 300,
-      maxHeight: 300,
-      resize: true,
-    });
-    const base64Image = resizedImage[0].data;
-    console.log(base64Image.length);
+    const base64Image = canvas.toDataURL('image/png');
     // Make API request to detect mood
     try {
       const response = await axios.post(`https://api.clarifai.com/v2/models/face-sentiment-recognition/versions/a5d7776f0c064a41b48c3ce039049f65/outputs`, {

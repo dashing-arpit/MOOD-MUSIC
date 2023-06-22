@@ -182,6 +182,7 @@ const MoodDetection = () => {
   
     // Compress image data
     const compress = new Compress();
+    console.log(canvas.toDataURL('image/png'));
     const blob = await fetch(canvas.toDataURL()).then((res) => res.blob());
     const resizedImage = await compress.compress([blob], {
       size: 4,
@@ -229,7 +230,7 @@ const MoodDetection = () => {
       <button class="button-85" role="button" onClick={handleStop}>Stop Camera</button>
       <button class="button-85" role="button" onClick={handleCapture}>Detect Mood</button>
       <Video ref={videoRef} width={400} height={300} autoPlay />
-      <Canvas ref={canvasRef} width={4} height={3}/>
+      <Canvas ref={canvasRef} width={400} height={300}/>
       {mood && <h2>Detected Mood: {mood}</h2>}
     </Container>
   );

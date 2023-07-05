@@ -7,7 +7,7 @@ import { reducerCases } from "../utils/Constants";
 export default function Body({ headerBackground }) {
   const [{ token, selectedPlaylist, selectedPlaylistId }, dispatch] =
     useStateProvider();
-
+   
   useEffect(() => {
     const getInitialPlaylist = async () => {
       const response = await axios.get(

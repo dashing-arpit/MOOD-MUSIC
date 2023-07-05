@@ -6,6 +6,8 @@ import Compress from 'compress.js';
 import { reducerCases } from "../utils/Constants";
 import { useStateProvider } from "../utils/StateProvider";
 import './button.css';
+import { AiFillRightCircle } from 'react-icons/ai';
+import { toHaveTextContent } from '@testing-library/jest-dom/dist/matchers';
 const app = new Clarifai.App({
   apiKey: '0d1678228b2740cc985509c91e4d34eab'
 });
@@ -74,10 +76,10 @@ const MoodDetection = () => {
           track_number: track.track_number,
         })),
       };
-      dispatch({ type: reducerCases.SET_PLAYLIST, selectedPlaylist });
+      dispatch({ type: reducerCases.SET_PLAYLIST, selectedPlaylist,selectedPlaylistId });
     };
     getInitialPlaylist();
-  }, [token, dispatch, selectedPlaylistId,selectedPlaylist]);
+  }, [token, dispatch, selectedPlaylistId]);
    /**playlist change part end */
 
    /**selecting a random song on that particular playlist start*/
@@ -133,6 +135,34 @@ const MoodDetection = () => {
     videoRef.current.srcObject = stream;
   };
 
+  //setting a random song on that playlist
+  useEffect(() => {
+    if (selectedPlaylistId && selectedPlaylist) {
+      const playlists = selectedPlaylist.tracks.map(({ id, name, artists, image, duration, album, context_uri, track_number }) => ({
+        id,
+        name,
+        artists,
+        image,
+        duration,
+        album,
+        context_uri,
+        track_number,
+      }));
+
+      const randomIndex = Math.floor(Math.random() * playlists.length);
+      const randomPlaylist = playlists[randomIndex];
+
+      playTrack(
+        randomPlaylist.id,
+        randomPlaylist.name,
+        randomPlaylist.artists,
+        randomPlaylist.image,
+        randomPlaylist.context_uri,
+        randomPlaylist.track_number
+      );
+    }
+  }, [selectedPlaylist]);
+
   const handleStop = () => {
     const stream = videoRef.current.srcObject;
     if (stream) {
@@ -142,37 +172,24 @@ const MoodDetection = () => {
     videoRef.current.srcObject = null;
 
     /**changing the the selected playlist*/
+       if(mood=='neutral')
        changeCurrentPlaylist('1u12mEkv7ejxpJVBizkh6Z');
-       console.log(selectedPlaylist);
-       console.log(selectedPlaylistId);
-       console.log(playlists);
-       //const playlis = playlists.find((playlis) => playlis.id === '41NHbQRs0HPjFwBAp7XEOW');
-       //console.log("lol",playlis);
-    /**choosing a random song on that playlist */
-       const playlists = selectedPlaylist.tracks.map(({ id, name, artists, image, duration, album, context_uri, track_number }) => ({
-       id,
-       name,
-       artists,
-       image,
-       duration,
-       album,
-       context_uri,
-       track_number,
-       }));
-      const randomIndex = Math.floor(Math.random() * playlists.length);
-      const randomPlaylist = playlists[randomIndex];
-      console.log(playlists);
-      console.log(randomPlaylist);
-      playTrack(
-      randomPlaylist.id,
-      randomPlaylist.name,
-      randomPlaylist.artists,
-      randomPlaylist.image,
-      randomPlaylist.context_uri,
-      randomPlaylist.track_number
-      )
+       else if(mood=='happiness')
+       changeCurrentPlaylist('5keMlwzTu5tjyO63G9F652');
+       else if(mood=='sadness-contempt')
+       changeCurrentPlaylist('4s1UiVao3r0o1tytaVxyCG');
+       else if(mood=='anger')
+       changeCurrentPlaylist('0AWfavfHcYpfV9dxEQEznr');
+       else if(mood=='fear')
+       changeCurrentPlaylist('0TVl34VKyfwDRP5Vz5i5RR');
+       else if(mood=='surprise')
+       changeCurrentPlaylist('5h40yaRd3e1ILdPuYrVXKd');
+       else if(mood=='disgust')
+       changeCurrentPlaylist('4bfu7xsAzHWh16Lolw3DRC');
+       
     setMood('');
   };
+
 
   const handleCapture = async () => {
     const canvas = canvasRef.current;
@@ -185,10 +202,10 @@ const MoodDetection = () => {
     console.log(canvas.toDataURL('image/png'));
     const blob = await fetch(canvas.toDataURL()).then((res) => res.blob());
     const resizedImage = await compress.compress([blob], {
-      size: 4,
-      quality: 0.75,
-      maxWidth: 300,
-      maxHeight: 300,
+      size: 8,
+      quality: 1.00,
+      maxWidth: 600,
+      maxHeight: 400,
       resize: true,
     });
     const base64Image = resizedImage[0].data;
@@ -229,8 +246,8 @@ const MoodDetection = () => {
       <button class="button-85" role="button" onClick={handleStart}>Start Camera</button>
       <button class="button-85" role="button" onClick={handleStop}>Stop Camera</button>
       <button class="button-85" role="button" onClick={handleCapture}>Detect Mood</button>
-      <Video ref={videoRef} width={400} height={300} autoPlay />
-      <Canvas ref={canvasRef} width={400} height={300}/>
+      <Video ref={videoRef} width={600} height={400} autoPlay />
+      <Canvas ref={canvasRef} width={600} height={400}/>
       {mood && <h2>Detected Mood: {mood}</h2>}
     </Container>
   );
